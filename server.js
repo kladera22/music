@@ -8,10 +8,14 @@ const artist = require('./routes/artist');
 const user = require('./routes/user');
 const error = require('./middlewares/error');
 const errorHandler = require('./middlewares/error');
+const connectDB = require('./config/db');
 
 dotenv.config({ path: './config/config.env'});
 
+connectDB();
+
 const app = express();
+
 
 if(process.env.NODE_ENV === 'development'){
     app.use(morgan('dev'))
