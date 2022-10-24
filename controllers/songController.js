@@ -227,23 +227,22 @@ const deleteSongRating = async (req, res, next) => {
 
     try {
         const song = await Song.findById(req.params.songId)
-        const rating = song.ratings.find(rating => (rating._id).equals(req.params.ratingId))
+        let rating = song.ratings.find(rating => (rating._id).equals(req.params.ratingId))
 
         if(rating) {
             const ratingIndexPosition = song.ratings.indexOf(rating)
             song.ratings.splice(ratingIndexPosition, 1)
             await song.save()
+            rating = {success: true, msg: `delete rating with id: ${req.params.ratingId}`}
         }
         else{
-            rating ={success:false, msh: `No rating found with rating id: ${req.params.ratingId}`}
+            rating ={success:false, msg: `No rating found with rating id: ${req.params.ratingId}`}
         }
 
         res
         .status(200)
         .setHeader('Content-Type', 'application/json')
-        .json({
-            success: true, msg: `delete rating with id: ${req.params.ratingId}`
-        })
+        .json(rating)
 
     } catch (err) {
         throw new Error (`Error deleting rating with id: ${req.params.ratingId}, ${err.message}`)
