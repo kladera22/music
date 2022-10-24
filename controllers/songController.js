@@ -1,20 +1,27 @@
 const Song = require('../models/Song');
-// '/' endpoint
 
 const getSongs = async (req, res, next) => {
+
+    const filter = {};
+    const options = {};
+
     if(Object.keys(req.query).length){
         const { 
             songTitle, 
             artist, 
-            genre 
+            genre,
+            limit,
+            sortByArtist 
         } = req.query
 
-        const filter = [];
+        if(songTitle)filter.songTitle = true
+        if(artist)filter.artist = true
+        if(genre)filter.genre = true
 
-
-        if(songTitle)filter.push(songTitle);
-        if(artist)filter.push(artist);
-        if(genre)filter.push(genre);
+        if(limit)options.limit = limit
+        if(sortByArtist)options.sort = {
+            artist: sortByArtist === 'asc' ? 1:-1
+        }
 
         for(let i=0; i<filter.length; i++){
             console.log(`Searching song(s) by: ${filter[i]}`)
@@ -22,33 +29,31 @@ const getSongs = async (req, res, next) => {
     }
 
     try {
-        const result = await Song.find();
+        const songs = await Song.find({}, filter, options);
 
         res
         .status(200)
         .setHeader('Content-Type', 'application/json')
-        .json(result)
+        .json(songs)
         
     } catch (err) {
         throw new Error(`Error retrieving songs: ${err.message}`);
     }
-    
 }
 
 const postSong = async (req, res, next) => {
 
     try {
-        const result = await Song.create(req.body);
+        const song = await Song.create(req.body);
 
         res
         .status(201)
         .setHeader('Content-Type', 'application/json')
-        .json(result)
+        .json(song)
         
     } catch (err) {
         throw new Error(`Error creating songs: ${err.message}`);
     }
-    
 }
 
 const deleteSongs = async (req, res, next) => {
@@ -66,31 +71,27 @@ const deleteSongs = async (req, res, next) => {
     } catch (err) {
         throw new Error(`Error deleting songs: ${err.message}`);
     }
-  
 }
-
-// '/songId' endpoint
 
 const getSong = async (req, res, next) => {
 
     try {
-        const result = await Song.findById(req.params.songId)
+        const song = await Song.findById(req.params.songId)
 
         res
         .status(200)
         .setHeader('Content-Type', 'application/json')
-        .json(result)
+        .json(song)
         
     } catch (err) {
         throw new Error (`Error retrieving song(s) with id: ${req.params.songId}, ${err.message}`);
     }
-   
 }
 
 const updateSong = async (req, res, next) => {
 
     try {
-        const result = await Song.findByIdAndUpdate(req.params.songId,{
+        const song = await Song.findByIdAndUpdate(req.params.songId,{
             $set: req.body
         },{
             new: true,
@@ -99,12 +100,11 @@ const updateSong = async (req, res, next) => {
         res
         .status(200)
         .setHeader('Content-Type', 'application/json')
-        .json(result)
+        .json(song)
 
     } catch (err) {
         throw new Error (`Error updating song(s) with id: ${req.params.songId}, ${err.message}`)
     }
-   
 }
 
 const deleteSong = async (req, res, next) => {
@@ -122,7 +122,132 @@ const deleteSong = async (req, res, next) => {
     } catch (err) {
         throw new Error (`Error deleting song(s) with id: ${req.params.songId}, ${err.message}`)
     }
+}
+
+const getSongRatings = async (req, res, next) => {
+
+    try {
+        const song = await Song.findById(req.params.songId)
+        const ratings = song.ratings
+
+        res
+        .status(200)
+        .setHeader('Content-Type', 'application/json')
+        .json(ratings)
+
+    } catch (err) {
+        throw new Error (`Error retrieving song rating: ${err.message}`)
+    }
+
+}
+
+const postSongRating = async (req, res, next) => {
     
+    try {
+        const song = await Song.findById(req.params.songId)
+        song.ratings.push(req.body);
+    
+        const result = await song.save();
+
+        res
+        .status(200)
+        .setHeader('Content-Type', 'application/json')
+        .json(result)
+
+    } catch (err) {
+        throw new Error (`Error creating rating: ${err.message}`)
+    }
+}
+
+const deleteSongRatings = async (req, res, next) => {
+    
+    try {
+        const song = await Song.findById(req.params.songId)
+
+        song.ratings = []
+        await song.save()
+
+        res
+        .status(200)
+        .setHeader('Content-Type', 'application/json')
+        .json({
+            success: true, msg: `delete all rating`
+        })
+
+    } catch (err) {
+        throw new Error (`Error deleting ratings: ${err.message}`)
+    }
+}
+
+const getSongRating = async (req, res, next) => {
+
+    try {
+        const song = await Song.findById(req.params.songId)
+        const rating = song.ratings.find(rating => (rating._id).equals(req.params.ratingId))
+            
+        if(!rating) {rating = {success:false, msg: `No rating found with rating id: ${req.params.ratingId}`}}
+
+        res
+        .set(200)
+        .setHeader('Content-Type', 'application/json')
+        .json(rating)
+
+    } catch (err) {
+        throw new Error (`Error retrieving raiting with id: ${req.params.ratingId}, ${err.message}`)
+    }
+}
+
+const updateSongRating = async (req, res, next) => {
+
+    try {
+        const song = await Song.findById(req.params.songId)
+        let rating = song.ratings.find(rating => (rating._id).equals(req.params.ratingId))
+        
+        if(rating){
+            const ratingIndexPosition = song.ratings.indexOf(rating);
+            song.ratings.splice(ratingIndexPosition, 1, req.body)
+            rating = song.ratings[ratingIndexPosition]
+            await song.save()
+        }
+        else{
+            rating = {success:false, msg: `No rating found with id: ${req.params.ratingId}`}
+        }
+        
+        res
+        .status(200)
+        .setHeader('Content-Type', 'application/json')
+        .json(rating)
+        
+    } catch (err) {
+        throw new Error (`Error updating rating with id: ${req.params.ratingId}, ${err.message}`)
+    }
+}
+
+const deleteSongRating = async (req, res, next) => {
+
+    try {
+        const song = await Song.findById(req.params.songId)
+        const rating = song.ratings.find(rating => (rating._id).equals(req.params.ratingId))
+
+        if(rating) {
+            const ratingIndexPosition = song.ratings.indexOf(rating)
+            song.ratings.splice(ratingIndexPosition, 1)
+            await song.save()
+        }
+        else{
+            rating ={success:false, msh: `No rating found with rating id: ${req.params.ratingId}`}
+        }
+
+        res
+        .status(200)
+        .setHeader('Content-Type', 'application/json')
+        .json({
+            success: true, msg: `delete rating with id: ${req.params.ratingId}`
+        })
+
+    } catch (err) {
+        throw new Error (`Error deleting rating with id: ${req.params.ratingId}, ${err.message}`)
+    }
 }
 
 module.exports = {
@@ -131,5 +256,11 @@ module.exports = {
     deleteSongs,
     getSong,
     updateSong,
-    deleteSong
+    deleteSong,
+    getSongRatings,
+    postSongRating,
+    deleteSongRatings,
+    getSongRating,
+    updateSongRating,
+    deleteSongRating
 }

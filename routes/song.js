@@ -6,7 +6,13 @@ const {
     deleteSongs,
     getSong,
     updateSong,
-    deleteSong
+    deleteSong,
+    getSongRatings,
+    postSongRating,
+    deleteSongRatings,
+    getSongRating,
+    updateSongRating,
+    deleteSongRating
 } = require('../controllers/songController');
 
 const reqRecievedLogger = require('../middlewares/reqRecievedLogger');
@@ -21,5 +27,15 @@ router.route('/:songId')
     .get(reqRecievedLogger, getSong)
     .put(reqRecievedLogger, updateSong)
     .delete(reqRecievedLogger, deleteSong)
+
+router.route('/:songId/ratings')
+    .get(reqRecievedLogger, getSongRatings)
+    .post(reqRecievedLogger, postSongRating)
+    .delete(reqRecievedLogger, deleteSongRatings)
+
+router.route('/:songId/ratings/:ratingId')
+    .get(reqRecievedLogger, getSongRating)
+    .put(reqRecievedLogger, updateSongRating)
+    .delete(reqRecievedLogger, deleteSongRating)
 
 module.exports = router;

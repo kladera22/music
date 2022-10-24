@@ -14,7 +14,6 @@ const {userValidator} = require('../middlewares/utils/validators');
 
 router.route('/')
     .get(reqRecievedLogger, getUsers)
-   //.get(()=>console.log('work'))
     .post(reqRecievedLogger, userValidator, postUser)
     .delete(reqRecievedLogger, deleteUsers)
 
