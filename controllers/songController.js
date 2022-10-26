@@ -22,10 +22,6 @@ const getSongs = async (req, res, next) => {
         if(sortByArtist)options.sort = {
             artist: sortByArtist === 'asc' ? 1:-1
         }
-
-        for(let i=0; i<filter.length; i++){
-            console.log(`Searching song(s) by: ${filter[i]}`)
-        }
     }
 
     try {

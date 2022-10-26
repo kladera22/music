@@ -6,7 +6,8 @@ const {
     deleteArtists,
     getArtist,
     updateArtist,
-    deleteArtist
+    deleteArtist,
+    postArtistImage
 } = require('../controllers/artistController');
 
 const reqRecievedLogger = require('../middlewares/reqRecievedLogger');
@@ -21,5 +22,8 @@ router.route('/:artistId')
     .get(reqRecievedLogger, getArtist)
     .put(reqRecievedLogger, updateArtist)
     .delete(reqRecievedLogger, deleteArtist)
+
+router.route('/:artistId/image')
+    .post(reqRecievedLogger, postArtistImage)
 
 module.exports = router;

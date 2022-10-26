@@ -9,6 +9,8 @@ const user = require('./routes/user');
 const error = require('./middlewares/error');
 const errorHandler = require('./middlewares/error');
 const connectDB = require('./config/db');
+const cookieParser = require('cookie-parser');
+const fileupload = require('express-fileupload');
 
 dotenv.config({ path: './config/config.env'});
 
@@ -23,6 +25,8 @@ if(process.env.NODE_ENV === 'development'){
 
 app.use(bodyParser.json())
 app.use(logger);
+app.use(cookieParser());
+app.use(fileupload());
 
 app.use('/api/v1/song', song);
 app.use('/api/v1/artist', artist);

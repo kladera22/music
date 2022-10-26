@@ -1,4 +1,5 @@
 const Artist = require('../models/Artist');
+const path = require('path');
 
 const getArtists = async (req, res, next) => {
 
@@ -14,8 +15,6 @@ const getArtists = async (req, res, next) => {
             sortByGenre
         } = req.query
 
-        const filter = [];
-
         if(firstName)filter.firstName = true
         if(lastName)filter.lastName = true
         if(genre)filter.genre = true
@@ -23,10 +22,6 @@ const getArtists = async (req, res, next) => {
         if(limit)options.limit = limit
         if(sortByGenre)options.sort = {
             genre: sortByGenre === 'asc' ? 1:-1
-        }
-
-        for(i=0; i<filter.length; i++){
-            console.log(`Searching for artist(s) by: ${filter[i]}`)
         }
     }
 
@@ -126,11 +121,36 @@ const deleteArtist = async (req, res, next) => {
     }
 }
 
+const postArtistImage = async (req, res ,next) => {
+    if(!req.files) throw new Error('Missing image!')
+
+    const file = req.files.file
+
+    if(!file.mimetype.startsWith('image')) throw new Error('Please upload a image file type!')
+    if(file.size > process.env.MAX_FILE_SIZE) throw new Error(`Image exceeds size of ${process.env.MAX_FILE_SIZE}`)
+
+    file.name = `photo_${path.parse(file.name).ext}`
+
+    const filePath = process.env.FILE_UPLOAD_PATH + file.name
+    
+    file.mv(filePath, async (err) => {
+        if(err) throw new Error('Problem uploading photo')
+
+        await Artist.findByIdAndUpdate(req.params.artistId, {image: file.name})
+
+        res
+        .status(200)
+        .setHeader('Content-Type', 'application/json')
+        .json({success: true, data: file.name})
+    })
+}
+
 module.exports = {
     getArtists,
     postArtist,
     deleteArtists,
     getArtist,
     updateArtist,
-    deleteArtist
+    deleteArtist,
+    postArtistImage
 }

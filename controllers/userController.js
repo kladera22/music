@@ -30,10 +30,6 @@ const getUsers = async (req, res, next) => {
         if(sortByAge) options.sort = {
             age: sortByAge === 'asc' ? 1 : -1 
         }
-
-        for(let i=0; i<filter.length; i++){
-            console.log(`Searching for user(s) by: ${filter[i]}`)
-        }
     }
 
     try {
