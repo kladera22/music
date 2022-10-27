@@ -2,7 +2,7 @@ const Artist = require('../models/Artist');
 const path = require('path');
 
 const getArtists = async (req, res, next) => {
-
+    
     const filter = {}
     const options = {}
 

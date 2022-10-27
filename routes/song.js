@@ -17,25 +17,26 @@ const {
 
 const reqRecievedLogger = require('../middlewares/reqRecievedLogger');
 const {songValidator} = require('../middlewares/utils/validators');
+const protectedRoute = require('../middlewares/auth')
 
 router.route('/')
     .get(reqRecievedLogger, getSongs)
-    .post(reqRecievedLogger, songValidator, postSong)
-    .delete(reqRecievedLogger, deleteSongs)
+    .post(reqRecievedLogger, protectedRoute, songValidator, postSong)
+    .delete(reqRecievedLogger, protectedRoute, deleteSongs)
 
 router.route('/:songId')
     .get(reqRecievedLogger, getSong)
-    .put(reqRecievedLogger, updateSong)
-    .delete(reqRecievedLogger, deleteSong)
+    .put(reqRecievedLogger, protectedRoute, updateSong)
+    .delete(reqRecievedLogger, protectedRoute, deleteSong)
 
 router.route('/:songId/ratings')
     .get(reqRecievedLogger, getSongRatings)
-    .post(reqRecievedLogger, postSongRating)
-    .delete(reqRecievedLogger, deleteSongRatings)
+    .post(reqRecievedLogger, protectedRoute, postSongRating)
+    .delete(reqRecievedLogger, protectedRoute, deleteSongRatings)
 
 router.route('/:songId/ratings/:ratingId')
     .get(reqRecievedLogger, getSongRating)
-    .put(reqRecievedLogger, updateSongRating)
-    .delete(reqRecievedLogger, deleteSongRating)
+    .put(reqRecievedLogger, protectedRoute, updateSongRating)
+    .delete(reqRecievedLogger, protectedRoute, deleteSongRating)
 
 module.exports = router;
