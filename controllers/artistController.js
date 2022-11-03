@@ -7,7 +7,7 @@ const getArtists = async (req, res, next) => {
     const options = {}
 
     if(Object.keys(req.query).length){
-        const{
+        const{ 
             firstName,
             lastName,
             genre,
@@ -20,7 +20,7 @@ const getArtists = async (req, res, next) => {
         if(genre)filter.genre = true
 
         if(limit)options.limit = limit
-        if(sortByGenre)options.sort = {
+        if(sortByGenre)options.sort = { 
             genre: sortByGenre === 'asc' ? 1:-1
         }
     }

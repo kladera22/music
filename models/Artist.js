@@ -8,7 +8,7 @@ const ArtistSchema = new Schema ({
         maxLength: 10
     },
 
-    lastName: {
+    lastName: { 
         type: String,
         required: true,
         maxLength: 10

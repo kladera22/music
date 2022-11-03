@@ -4,7 +4,7 @@ const {
     getArtists,
     postArtist,
     deleteArtists,
-    getArtist,
+    getArtist, 
     updateArtist,
     deleteArtist,
     postArtistImage
@@ -14,7 +14,7 @@ const reqRecievedLogger = require('../middlewares/reqRecievedLogger');
 const {artistValidator} = require('../middlewares/utils/validators');
 const protectedRoute = require('../middlewares/auth')
 
-router.route('/')
+router.route('/') 
     .get(reqRecievedLogger, getArtists)
     .post(reqRecievedLogger, protectedRoute, artistValidator, postArtist)
     .delete(reqRecievedLogger, protectedRoute, deleteArtists)

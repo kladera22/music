@@ -163,7 +163,7 @@ const forgotPassword = async (req, res, next) => {
         throw new Error ('Failed to save new password')
         
     }
-}
+} 
 
 const resetPassword = async (req, res, next) => {
     const resetPasswordToken = crypto.createHash('sha256').update(req.query.resetToken).digest('hex')

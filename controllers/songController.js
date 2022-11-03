@@ -8,7 +8,7 @@ const getSongs = async (req, res, next) => {
     if(Object.keys(req.query).length){
         const { 
             songTitle, 
-            artist, 
+            artist,  
             genre,
             limit,
             sortByArtist 

@@ -5,7 +5,7 @@ const RatingSchema = new Schema ({
     rating: {
         type: Number,
         min: 1,
-        max: 5,
+        max: 5, 
         required: true,
         validate: (rating) => {
             return typeof rating === 'number'

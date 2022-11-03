@@ -10,7 +10,7 @@ const {
     getSongRatings,
     postSongRating,
     deleteSongRatings,
-    getSongRating,
+    getSongRating, 
     updateSongRating,
     deleteSongRating
 } = require('../controllers/songController');
